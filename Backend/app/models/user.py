@@ -13,8 +13,19 @@ class User(Base):
         index=True
     )
 
-    username: Mapped[str] = mapped_column(
+    user_name: Mapped[str] = mapped_column(
         Text,
         unique=True,
+        nullable=False
+    )
+
+    email_id: Mapped[str] = mapped_column(
+        Text,
+        unique=True,
+        nullable=False
+    )
+
+    hashed_password: Mapped[str] = mapped_column(
+        Text,
         nullable=False
     )
