@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.config.settings import DATABASE_URL
@@ -24,11 +24,3 @@ def get_db():
     finally:
         db.close()
 
-
-# Temporary database test
-try:
-    with engine.connect() as connection:
-        result = connection.execute(text("SELECT 1"))
-        print("Database result:", result.scalar())
-except Exception as e:
-    print("Database connection failed:", e)
