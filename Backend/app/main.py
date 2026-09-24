@@ -3,6 +3,8 @@ from fastapi import FastAPI
 
 from app.database.base import Base
 from app.database.connection import engine
+from app.models.album import album
+from app.models.song import SongDetails
 
 from app.routes.auth import router as auth_router
 

@@ -3,8 +3,7 @@ from sqlalchemy import select
 from app.database.connection import get_db
 from app.models.user import User
 from app.models.session_table import SessionTable
-from datetime import datetime, timezone,timedelta
-from app.config.settings import JWT_ACCESS_TOKEN_EXPIRE_MINUTES
+from datetime import datetime, timezone
 
 from app.schemas.user import UserCreate, UserLogin
 from app.auth.password import hash_password, verify_password
