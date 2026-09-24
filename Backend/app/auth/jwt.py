@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 from jose import jwt
 from app.config.settings import JWT_ACCESS_TOKEN_EXPIRE_MINUTES, JWT_SECRET_KEY, JWT_ALGORITHM
 
-def create_access_token(user_id : int) -> str:
+def create_access_token(user_id : int):
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES
     )
@@ -18,6 +18,6 @@ def create_access_token(user_id : int) -> str:
         algorithm=JWT_ALGORITHM
     )
 
-    return token
+    return token, expire
 
     
