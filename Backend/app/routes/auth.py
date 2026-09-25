@@ -5,7 +5,7 @@ from app.models.user import User
 from app.models.session_table import SessionTable
 from datetime import datetime, timezone
 
-from app.schemas.user import UserCreate, UserLogin
+from app.schemas.UserCreation import UserCreate, UserLogin
 from app.auth.password import hash_password, verify_password
 from app.auth.jwt import create_access_token
 from app.auth.dependency import get_current_user
