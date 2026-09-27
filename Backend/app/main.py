@@ -12,6 +12,7 @@ from app.routes.album import router as album_router
 from app.routes.artist import router as artist_router
 from app.routes.song_artist import router as song_artist_router
 
+
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -23,4 +24,5 @@ app.include_router(song_router)
 app.include_router(album_router)
 app.include_router(artist_router)
 app.include_router(song_artist_router)
+
 

@@ -2,7 +2,7 @@ from fastapi import Depends, APIRouter
 
 from app.database.connection import get_db
 from app.models.artist import artist
-from app.schemas.ArtistCreation import ArtistCreate
+from app.schemas.ArtistCreation import add_artist
 from sqlalchemy import select
 
 router = APIRouter(
@@ -12,7 +12,7 @@ router = APIRouter(
 
 
 @router.post("/add_artist")
-def add_artist(artist_data: ArtistCreate, db=Depends(get_db)):
+async def add_artist(artist_data: add_artist, db=Depends(get_db)):
 
     new_artist = artist(
         artist_name=artist_data.artist_name
