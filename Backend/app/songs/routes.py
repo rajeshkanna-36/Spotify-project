@@ -3,8 +3,8 @@ from sqlalchemy import select
 from uuid import uuid4
 
 from app.database.connection import get_db
-from app.models.song import SongDetails
-from app.models.album import album
+from app.songs.models import SongDetails
+from app.albums.models import album
 from app.storage.s3 import upload_mp3
 
 

@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 
 from app.database.connection import get_db
-from app.models.album import album as Album
-from app.schemas.AlbumCreation import add_album
+from app.albums.models import album as Album
+from app.albums.schemas import add_album
 
 
 router = APIRouter(

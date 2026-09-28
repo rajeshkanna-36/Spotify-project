@@ -38,7 +38,3 @@ class SessionTable(Base):
         nullable=False,
         default=False
     )
-
-    
-
-    

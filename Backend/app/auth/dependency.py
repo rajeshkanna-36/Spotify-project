@@ -2,10 +2,10 @@ from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer
 from jose import jwt
 
-from app.config.settings import JWT_SECRET_KEY, JWT_ALGORITHM
+from app.core.settings import JWT_SECRET_KEY, JWT_ALGORITHM
 from app.database.connection import get_db
-from app.models.user import User
-from app.models.session_table import SessionTable
+from app.users.models import User
+from app.auth.models import SessionTable
 from sqlalchemy import select
 from datetime import datetime, timezone
 

@@ -1,8 +1,8 @@
 from fastapi import Depends, APIRouter
 
 from app.database.connection import get_db
-from app.models.artist import artist
-from app.schemas.ArtistCreation import add_artist
+from app.artists.models import artist
+from app.artists.schemas import add_artist
 from sqlalchemy import select
 
 router = APIRouter(

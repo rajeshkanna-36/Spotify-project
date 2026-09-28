@@ -1,8 +1,7 @@
 from fastapi import APIRouter,Depends,HTTPException
 
-from app.models.playlist import Playlist
-from app.models.playlist_song import playlist_song
-from app.schemas.PlaylistCreation import playlist_create,playlist_add
+from app.playlists.models import Playlist, playlist_song
+from app.playlists.schemas import playlist_create, playlist_add
 from app.database.connection import get_db
 from app.auth.dependency import get_current_user
 from sqlalchemy import select

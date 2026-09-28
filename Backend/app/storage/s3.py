@@ -1,6 +1,6 @@
 import boto3
 
-from app.config.settings import AWS_ACCESS_KEY_ID,AWS_REGION,AWS_S3_BUCKET,AWS_SECRET_ACCESS_KEY
+from app.core.settings import AWS_ACCESS_KEY_ID,AWS_REGION,AWS_S3_BUCKET,AWS_SECRET_ACCESS_KEY
 
 s3_client = boto3.client(
     "s3",

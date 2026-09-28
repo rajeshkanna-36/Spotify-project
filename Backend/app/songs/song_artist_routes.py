@@ -1,9 +1,9 @@
 from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy import select
 
-from app.models.song_artist import song_artist
-from app.schemas.SongArtistCreation import add_song_artist
-from app.models import artist, SongDetails
+from app.songs.models import song_artist, SongDetails
+from app.songs.schemas import add_song_artist
+from app.artists.models import artist
 from app.database.connection import get_db
 
 

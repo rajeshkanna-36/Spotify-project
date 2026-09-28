@@ -10,4 +10,3 @@ class playlist_add(BaseModel):
     playlist_id:int
     song_id:int
     position:int
-    

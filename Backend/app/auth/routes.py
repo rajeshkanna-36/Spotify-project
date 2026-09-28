@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from app.database.connection import get_db
-from app.models.user import User
-from app.models.session_table import SessionTable
+from app.users.models import User
+from app.auth.models import SessionTable
 from datetime import datetime, timezone
 
-from app.schemas.UserCreation import UserCreate, UserLogin
+from app.users.schemas import UserCreate, UserLogin
 from app.auth.password import hash_password, verify_password
 from app.auth.jwt import create_access_token
 from app.auth.dependency import get_current_user
@@ -111,4 +111,3 @@ def logout(token = Depends(auth_scheme),db=Depends(get_db)):
 @router.get("/me")
 def check_user(user=Depends(get_current_user)):
     return user
-    
