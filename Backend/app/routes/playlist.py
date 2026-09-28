@@ -118,6 +118,27 @@ def delete_playlist(playlist_id:int,user_data = Depends(get_current_user),db = D
         "message": "Playlist deleted successfully"
     }
 
+@router.get("/{playlist_id}/songs")
+def playlist_songs(playlist_id:int,user_data = Depends(get_current_user),db = Depends(get_db)):
+    playlist = db.scalar(
+        select(Playlist).where(
+            Playlist.playlist_id == playlist_id,
+            Playlist.user_id == user_data.user_id
+        )
+    )
+    if not playlist:
+        raise HTTPException(
+            status_code=404,
+            detail="Playlist not found"
+        )
+    songs = db.scalars(
+        select(playlist_song).where(
+            playlist_song.playlist_id == playlist_id
+        )
+    ).all()
+    return songs
+
+
 @router.delete("/{playlist_id}/song/{song_id}")
 def delete_song(playlist_id:int,song_id:int,user_data = Depends(get_current_user),db = Depends(get_db)):
     playlist = db.scalar(
