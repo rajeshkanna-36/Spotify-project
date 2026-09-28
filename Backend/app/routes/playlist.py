@@ -4,6 +4,7 @@ from app.models.playlist import Playlist
 from app.models.playlist_song import playlist_song
 from app.schemas.PlaylistCreation import playlist_create,playlist_add
 from app.database.connection import get_db
+from app.auth.dependency import get_current_user
 from sqlalchemy import select
 
 router = APIRouter(
@@ -12,17 +13,10 @@ router = APIRouter(
 )
 
 @router.post("/create_playlist")
-def create_playlist( playlist_data : playlist_create, db = Depends(get_db)):
+def create_playlist( playlist_data : playlist_create, user_data =Depends(get_current_user),db = Depends(get_db)):
 
-    exist_playlist = db.scalar(
-        select(Playlist).where(Playlist.playlist_id==playlist_data.playlist_id)
-    )
-
-    if exist_playlist :
-        raise HTTPException(status_code=404,detail="Playlist already exists")
-    
     new_playlist = Playlist(
-        user_id = playlist_data.user_id,
+        user_id = user_data.user_id,
         playlist_name = playlist_data.playlist_name,
         created_at = playlist_data.created_at
     )
