@@ -32,10 +32,20 @@ def create_playlist( playlist_data : playlist_create, user_data =Depends(get_cur
 
 @router.put("/add_song")
 def add_song(
-    playlist_add_data: playlist_add,
-    db=Depends(get_db)
-):
-    
+    playlist_add_data: playlist_add,user_data =Depends(get_current_user),db=Depends(get_db)):
+    playlist = db.scalar(
+        select(Playlist).where(
+            Playlist.playlist_id == playlist_add_data.playlist_id,
+            Playlist.user_id == user_data.user_id
+        )
+    )
+
+    if not playlist:
+        raise HTTPException(
+            status_code=404,
+            detail="Playlist not found"
+        )
+
     exist_song = db.scalar(
         select(playlist_song).where(
             playlist_song.playlist_id == playlist_add_data.playlist_id,
@@ -63,4 +73,77 @@ def add_song(
         "message": "Song added successfully",
         "playlist_id": new_song.playlist_id,
         "song_id": new_song.song_id
+    }
+
+@router.get("/my_playlist")
+def my_playlist(user_data = Depends(get_current_user),db = Depends(get_db)):
+    playlists = db.scalars(
+        select(Playlist).where(
+            Playlist.user_id == user_data.user_id
+        )
+    ).all()
+    return playlists
+
+@router.get("/{playlist_id}")
+def playlist(playlist_id: int,user_data = Depends(get_current_user),db = Depends(get_db)):
+    playlist = db.scalar(
+        select(Playlist).where(
+            Playlist.playlist_id == playlist_id,
+            Playlist.user_id == user_data.user_id
+        )
+    )
+    if not playlist:
+        raise HTTPException(
+            status_code=404,
+            detail="Playlist not found"
+        )
+    return playlist
+
+@router.delete("/{playlist_id}")
+def delete_playlist(playlist_id:int,user_data = Depends(get_current_user),db = Depends(get_db)):
+    playlist = db.scalar(
+        select(Playlist).where(
+            Playlist.playlist_id == playlist_id,
+            Playlist.user_id == user_data.user_id
+        )
+    )
+    if not playlist:
+        raise HTTPException(
+            status_code=404,
+            detail="Playlist not found"
+        )
+    db.delete(playlist)
+    db.commit()
+    return {
+        "message": "Playlist deleted successfully"
+    }
+
+@router.delete("/{playlist_id}/song/{song_id}")
+def delete_song(playlist_id:int,song_id:int,user_data = Depends(get_current_user),db = Depends(get_db)):
+    playlist = db.scalar(
+        select(Playlist).where(
+            Playlist.playlist_id == playlist_id,
+            Playlist.user_id == user_data.user_id
+        )
+    )
+    if not playlist:
+        raise HTTPException(
+            status_code=404,
+            detail="Playlist not found"
+        )
+    song = db.scalar(
+        select(playlist_song).where(
+            playlist_song.playlist_id == playlist_id,
+            playlist_song.song_id == song_id
+        )
+    )
+    if not song:
+        raise HTTPException(
+            status_code=404,
+            detail="Song not found in playlist"
+        )
+    db.delete(song)
+    db.commit()
+    return {
+        "message": "Song deleted successfully from playlist"
     }
