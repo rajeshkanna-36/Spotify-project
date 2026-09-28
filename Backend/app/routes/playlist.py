@@ -1,6 +1,5 @@
 from fastapi import APIRouter,Depends,HTTPException
 
-from app.models.user import user
 from app.models.playlist import Playlist
 from app.models.playlist_song import playlist_song
 from app.schemas.PlaylistCreation import playlist_create,playlist_add
@@ -38,19 +37,28 @@ def create_playlist( playlist_data : playlist_create, db = Depends(get_db)):
     }
 
 @router.put("/add_song")
-def add_song( playlist_add_data: playlist_add, db = Depends(get_db)):
+def add_song(
+    playlist_add_data: playlist_add,
+    db=Depends(get_db)
+):
     
     exist_song = db.scalar(
-        select(playlist_song).where(playlist_song.playlist_id==playlist_add_data.playlist_id)
+        select(playlist_song).where(
+            playlist_song.playlist_id == playlist_add_data.playlist_id,
+            playlist_song.song_id == playlist_add_data.song_id
+        )
     )
-    
+
     if exist_song:
-        raise HTTPException(status_code=404,detail="Song already exists in playlist")
+        raise HTTPException(
+            status_code=400,
+            detail="Song already exists in playlist"
+        )
 
     new_song = playlist_song(
-        playlist_id = playlist_add_data.playlist_id,
-        song_id = playlist_add_data.song_id,
-        position = playlist_add_data.position
+        playlist_id=playlist_add_data.playlist_id,
+        song_id=playlist_add_data.song_id,
+        position=playlist_add_data.position
     )
 
     db.add(new_song)
