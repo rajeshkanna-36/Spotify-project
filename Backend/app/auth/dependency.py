@@ -5,6 +5,7 @@ from jose import jwt
 from app.core.settings import JWT_SECRET_KEY, JWT_ALGORITHM
 from app.database.connection import get_db
 from app.users.models import User
+from app.admin.model import Admin
 from app.auth.models import SessionTable
 from sqlalchemy import select
 from datetime import datetime, timezone
@@ -22,6 +23,12 @@ def get_current_user(
         JWT_SECRET_KEY,
         algorithms=[JWT_ALGORITHM]
     )
+
+    if payload.get("type") != "user":
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid user token"
+        )
 
     user_id = int(payload["sub"])
 
@@ -54,6 +61,7 @@ def get_current_user(
 
     return user
 
+
 def get_current_admin(
     token=Depends(auth_scheme),
     db=Depends(get_db)
@@ -63,6 +71,12 @@ def get_current_admin(
         JWT_SECRET_KEY,
         algorithms=[JWT_ALGORITHM]
     )
+
+    if payload.get("type") != "admin":
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid admin token"
+        )
 
     admin_id = int(payload["sub"])
 
@@ -81,16 +95,16 @@ def get_current_admin(
             detail="Invalid credentials"
         )
 
-    admin = db.scalar(
-        select(admin).where(
-            admin.admin_id == admin_id
+    admin_record = db.scalar(
+        select(Admin).where(
+            Admin.admin_id == admin_id
         )
     )
 
-    if not admin:
+    if not admin_record:
         raise HTTPException(
             status_code=401,
             detail="Admin not found"
         )
 
-    return admin
+    return admin_record
