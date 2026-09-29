@@ -53,3 +53,44 @@ def get_current_user(
         )
 
     return user
+
+def get_current_admin(
+    token=Depends(auth_scheme),
+    db=Depends(get_db)
+):
+    payload = jwt.decode(
+        token.credentials,
+        JWT_SECRET_KEY,
+        algorithms=[JWT_ALGORITHM]
+    )
+
+    admin_id = int(payload["sub"])
+
+    session = db.scalar(
+        select(SessionTable).where(
+            SessionTable.admin_id == admin_id,
+            SessionTable.token == token.credentials,
+            SessionTable.expire_at > datetime.now(timezone.utc),
+            SessionTable.revoked == False
+        )
+    )
+
+    if not session:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid credentials"
+        )
+
+    admin = db.scalar(
+        select(admin).where(
+            admin.admin_id == admin_id
+        )
+    )
+
+    if not admin:
+        raise HTTPException(
+            status_code=401,
+            detail="Admin not found"
+        )
+
+    return admin
