@@ -5,7 +5,7 @@ from app.admin.model import admin
 from app.admin.schema import admin_signup
 from sqlalchemy import select
 from app.auth.password import hash_password,verify_password
-from app.auth.jwt import create_access_token
+from app.auth.jwt import create_admin_access_token
 from app.auth.models import SessionTable
 from datetime import datetime, timezone
 
@@ -63,14 +63,18 @@ async def admin_login(admin_data:admin_login,db:Session = Depends(get_db)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid admin_id or password"
         )
-    access_token,expire_at = create_access_token(admin.admin_id)
+    access_token,expire_at = create_admin_access_token(admin.admin_id, admin.role)
     session = SessionTable(
-        user_id = admin.admin_id,
+        admin_id = admin.admin_id,
         token = access_token,
         created_at = datetime.now(timezone.utc),
         expire_at = expire_at,
         revoked = False
     )
+    db.add(session)
+    db.commit()
+    db.refresh(session)
+    
     return {
         "message" : "Admin login successful",
         "admin_id" : admin.admin_id,

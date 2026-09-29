@@ -5,6 +5,7 @@ from app.playlists.schemas import playlist_create, playlist_add
 from app.database.connection import get_db
 from app.auth.dependency import get_current_user
 from sqlalchemy import select
+from app.auth.checker import check_user
 
 router = APIRouter(
     prefix="/playlist",
@@ -14,6 +15,8 @@ router = APIRouter(
 @router.post("/create_playlist")
 def create_playlist( playlist_data : playlist_create, user_data =Depends(get_current_user),db = Depends(get_db)):
 
+    check_user(user_data.user_id)
+    
     new_playlist = Playlist(
         user_id = user_data.user_id,
         playlist_name = playlist_data.playlist_name,
@@ -32,6 +35,9 @@ def create_playlist( playlist_data : playlist_create, user_data =Depends(get_cur
 @router.put("/add_song")
 def add_song(
     playlist_add_data: playlist_add,user_data =Depends(get_current_user),db=Depends(get_db)):
+
+    check_user(user_data.user_id)
+    
     playlist = db.scalar(
         select(Playlist).where(
             Playlist.playlist_id == playlist_add_data.playlist_id,
@@ -76,6 +82,8 @@ def add_song(
 
 @router.get("/my_playlist")
 def my_playlist(user_data = Depends(get_current_user),db = Depends(get_db)):
+    check_user(user_data.user_id)
+    
     playlists = db.scalars(
         select(Playlist).where(
             Playlist.user_id == user_data.user_id
@@ -100,6 +108,9 @@ def playlist(playlist_id: int,user_data = Depends(get_current_user),db = Depends
 
 @router.delete("/{playlist_id}")
 def delete_playlist(playlist_id:int,user_data = Depends(get_current_user),db = Depends(get_db)):
+    
+    check_user(user_data.user_id)
+    
     playlist = db.scalar(
         select(Playlist).where(
             Playlist.playlist_id == playlist_id,
@@ -119,6 +130,9 @@ def delete_playlist(playlist_id:int,user_data = Depends(get_current_user),db = D
 
 @router.get("/{playlist_id}/songs")
 def playlist_songs(playlist_id:int,user_data = Depends(get_current_user),db = Depends(get_db)):
+    
+    check_user(user_data.user_id)
+    
     playlist = db.scalar(
         select(Playlist).where(
             Playlist.playlist_id == playlist_id,
@@ -140,6 +154,9 @@ def playlist_songs(playlist_id:int,user_data = Depends(get_current_user),db = De
 
 @router.delete("/{playlist_id}/song/{song_id}")
 def delete_song(playlist_id:int,song_id:int,user_data = Depends(get_current_user),db = Depends(get_db)):
+    
+    check_user(user_data.user_id)
+    
     playlist = db.scalar(
         select(Playlist).where(
             Playlist.playlist_id == playlist_id,

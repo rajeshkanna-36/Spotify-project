@@ -8,12 +8,12 @@ class AdminRole(str, Enum):
     CONTENT_MANAGER = "content_manager"
 
 
-class AdminSignup(BaseModel):
+class admin_signup(BaseModel):
     admin_id: int
     role: AdminRole
     password: str
 
 
-class AdminLogin(BaseModel):
+class admin_login(BaseModel):
     admin_id: int
     password: str

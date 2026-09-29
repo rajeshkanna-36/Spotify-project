@@ -6,6 +6,8 @@ from app.database.connection import get_db
 from app.songs.models import SongDetails
 from app.albums.models import album
 from app.storage.s3 import upload_mp3
+from app.auth.dependency import get_current_admin
+from app.auth.checker import check_admin
 
 
 router = APIRouter(
@@ -16,6 +18,7 @@ router = APIRouter(
 
 @router.post("/add_song")
 def add_song(
+    admin=Depends(get_current_admin),
     song_name: str = Form(...),
     album_id: int = Form(...),
     song_cover_key: str = Form(...),
@@ -23,6 +26,8 @@ def add_song(
     file: UploadFile = File(...),
     db=Depends(get_db)
 ):
+
+    check_admin(admin.admin_id)
 
     # Check MP3
     if file.content_type != "audio/mpeg":

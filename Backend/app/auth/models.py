@@ -1,3 +1,4 @@
+from sqlalchemy import Integer
 from sqlalchemy import BigInteger,Text,DateTime,Boolean
 from sqlalchemy.orm import mapped_column, Mapped
 from app.database.base import Base
@@ -14,7 +15,12 @@ class SessionTable(Base):
 
     user_id : Mapped[int] = mapped_column(
         BigInteger,
-        nullable=False
+        nullable=True
+    )
+
+    admin_id : Mapped[int]=mapped_column(
+        Integer,
+        nullable=True
     )
 
     token : Mapped[str]=mapped_column(
