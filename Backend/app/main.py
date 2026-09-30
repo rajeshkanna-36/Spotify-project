@@ -13,8 +13,8 @@ from app.albums.models import album
 from app.artists.models import artist
 from app.playlists.models import Playlist, playlist_song
 
-from app.auth.routes import router as auth_router
 from app.admin.router import router as admin_router
+from app.users.routes import router as user_router
 from app.songs.routes import router as song_router
 from app.albums.routes import router as album_router
 from app.artists.routes import router as artist_router
@@ -29,8 +29,8 @@ app = FastAPI(
     title = "Spotify API",
     version="1.0.0"
 )
-app.include_router(auth_router)
 app.include_router(admin_router)
+app.include_router(user_router)
 app.include_router(song_router)
 app.include_router(album_router)
 app.include_router(artist_router)

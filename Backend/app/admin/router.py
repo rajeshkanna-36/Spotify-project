@@ -92,7 +92,6 @@ async def admin_login_route(
     db.add(session)
     db.commit()
     db.refresh(session)
-
     return {
         "message": "Admin login successful",
         "admin_id": admin_record.admin_id,
