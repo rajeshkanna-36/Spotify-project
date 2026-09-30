@@ -16,7 +16,7 @@ router = APIRouter(
 @router.post("/add_album")
 def add_album(album_data: add_album,admin=Depends(get_current_admin), db=Depends(get_db)):
 
-    check_admin(admin.admin_id)
+    check_admin(admin.admin_id, db)
         
     existing_album = db.scalar(
         select(Album).where(
@@ -43,7 +43,7 @@ def add_album(album_data: add_album,admin=Depends(get_current_admin), db=Depends
 
 @router.delete("/{album_id}")
 def delete_album(album_id: int,admin=Depends(get_current_admin), db=Depends(get_db)):
-    check_admin(admin.admin_id)
+    check_admin(admin.admin_id, db)
     
     exists_album = db.scalar(
         select(Album).where(

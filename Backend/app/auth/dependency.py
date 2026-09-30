@@ -9,7 +9,6 @@ from app.admin.model import Admin
 from app.auth.models import SessionTable
 from sqlalchemy import select
 from datetime import datetime, timezone
-from app.admin.model import admin
 
 
 auth_scheme = HTTPBearer()

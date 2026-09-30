@@ -17,7 +17,7 @@ router = APIRouter(
 @router.post("/add_artist")
 def add_artist(artist_data: add_artist,admin=Depends(get_current_admin), db=Depends(get_db)):
     
-    check_admin(admin.admin_id)
+    check_admin(admin.admin_id, db)
 
     new_artist = artist(
         artist_name=artist_data.artist_name
@@ -35,7 +35,7 @@ def add_artist(artist_data: add_artist,admin=Depends(get_current_admin), db=Depe
 @router.delete("/delete_artist/{artist_id}")
 def delete_artist(artist_id: int, admin=Depends(get_current_admin), db=Depends(get_db)):
     
-    check_admin(admin.admin_id)
+    check_admin(admin.admin_id, db)
     
     exist_artist = db.scalar(
         select(artist).where(

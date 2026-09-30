@@ -1,12 +1,14 @@
 from fastapi import HTTPException
 from sqlalchemy import select
-from app.database.connection import get_db as db
+from sqlalchemy.orm import Session
+from app.admin.model import Admin
+from app.users.models import User
 
-# function to check the admin in db
-def check_admin(admin : int):
+
+def check_admin(admin_id: int, db: Session):
     exists_admin = db.scalar(
-        select(admin).where(
-            admin.admin_id == admin.admin_id
+        select(Admin).where(
+            Admin.admin_id == admin_id
         )
     )
     if not exists_admin:
@@ -14,12 +16,12 @@ def check_admin(admin : int):
             status_code=404,
             detail="Admin not found"
         )
+    return exists_admin
 
-# function to check the user in db
-def check_user(user : int):
+def check_user(user_id: int, db: Session):
     exists_user = db.scalar(
-        select(user).where(
-            user.user_id == user.user_id
+        select(User).where(
+            User.user_id == user_id
         )
     )
     if not exists_user:
@@ -27,3 +29,4 @@ def check_user(user : int):
             status_code=404,
             detail="User not found"
         )
+    return exists_user

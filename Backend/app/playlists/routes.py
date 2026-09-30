@@ -15,7 +15,7 @@ router = APIRouter(
 @router.post("/create_playlist")
 def create_playlist( playlist_data : playlist_create, user_data =Depends(get_current_user),db = Depends(get_db)):
 
-    check_user(user_data.user_id)
+    check_user(user_data.user_id, db)
     
     new_playlist = Playlist(
         user_id = user_data.user_id,
@@ -36,7 +36,7 @@ def create_playlist( playlist_data : playlist_create, user_data =Depends(get_cur
 def add_song(
     playlist_add_data: playlist_add,user_data =Depends(get_current_user),db=Depends(get_db)):
 
-    check_user(user_data.user_id)
+    check_user(user_data.user_id, db)
     
     playlist = db.scalar(
         select(Playlist).where(
@@ -82,7 +82,7 @@ def add_song(
 
 @router.get("/my_playlist")
 def my_playlist(user_data = Depends(get_current_user),db = Depends(get_db)):
-    check_user(user_data.user_id)
+    check_user(user_data.user_id, db)
     
     playlists = db.scalars(
         select(Playlist).where(
@@ -109,7 +109,7 @@ def playlist(playlist_id: int,user_data = Depends(get_current_user),db = Depends
 @router.delete("/{playlist_id}")
 def delete_playlist(playlist_id:int,user_data = Depends(get_current_user),db = Depends(get_db)):
     
-    check_user(user_data.user_id)
+    check_user(user_data.user_id, db)
     
     playlist = db.scalar(
         select(Playlist).where(
@@ -131,7 +131,7 @@ def delete_playlist(playlist_id:int,user_data = Depends(get_current_user),db = D
 @router.get("/{playlist_id}/songs")
 def playlist_songs(playlist_id:int,user_data = Depends(get_current_user),db = Depends(get_db)):
     
-    check_user(user_data.user_id)
+    check_user(user_data.user_id, db)
     
     playlist = db.scalar(
         select(Playlist).where(
@@ -155,7 +155,7 @@ def playlist_songs(playlist_id:int,user_data = Depends(get_current_user),db = De
 @router.delete("/{playlist_id}/song/{song_id}")
 def delete_song(playlist_id:int,song_id:int,user_data = Depends(get_current_user),db = Depends(get_db)):
     
-    check_user(user_data.user_id)
+    check_user(user_data.user_id, db)
     
     playlist = db.scalar(
         select(Playlist).where(

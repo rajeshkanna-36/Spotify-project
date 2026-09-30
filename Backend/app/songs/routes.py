@@ -27,7 +27,7 @@ def add_song(
     db=Depends(get_db)
 ):
 
-    check_admin(admin.admin_id)
+    check_admin(admin.admin_id, db)
 
     # Check MP3
     if file.content_type != "audio/mpeg":
