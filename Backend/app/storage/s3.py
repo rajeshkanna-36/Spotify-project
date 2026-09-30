@@ -29,4 +29,10 @@ def upload_mp3(file,obj_key : str):
     )
 
     return obj_key
+
+def delete_object(obj_key: str):
+    s3_client.delete_object(
+        Bucket=AWS_S3_BUCKET,
+        Key=obj_key
+    )
     

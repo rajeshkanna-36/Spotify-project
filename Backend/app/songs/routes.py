@@ -8,6 +8,8 @@ from app.albums.models import album
 from app.storage.s3 import upload_mp3
 from app.auth.dependency import get_current_admin
 from app.auth.checker import check_admin
+from app.storage.s3 import delete_object
+from app.artists.models import song_artist
 
 
 router = APIRouter(
@@ -72,3 +74,32 @@ def add_song(
     db.refresh(new_song)
 
     return new_song
+
+@router.delete("/delete_song{song_id}")
+def delete_song(song_id:int,admin=Depends(get_current_admin), db=Depends(get_db)):
+    check_admin(admin.admin_id, db)
+    
+    exists_song = db.scalar(
+        select(SongDetails).where(
+            SongDetails.song_id == song_id
+        )
+    )
+    if not exists_song:
+        raise HTTPException(
+            status_code=404,
+            detail="Song not found"
+        )
+
+    delete_object(exists_song.song_key)
+    delete_object(exists_song.song_cover_key)
+    
+    db.query(song_artist).filter(
+        song_artist.song_id == song_id
+    ).delete()
+    
+    db.delete(exists_song)
+    db.commit()
+    
+    return {
+        "message": "Song deleted successfully"
+    }
