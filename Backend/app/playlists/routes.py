@@ -6,6 +6,7 @@ from app.database.connection import get_db
 from app.auth.dependency import get_current_user
 from sqlalchemy import select
 from app.auth.checker import check_user
+from app.songs.models import SongDetails
 
 router = APIRouter(
     prefix="/playlist",
@@ -122,6 +123,11 @@ def delete_playlist(playlist_id:int,user_data = Depends(get_current_user),db = D
             status_code=404,
             detail="Playlist not found"
         )
+    
+    db.query(playlist_song).filter(
+        playlist_song.playlist_id == playlist_id
+    ).delete()
+    
     db.delete(playlist)
     db.commit()
     return {
@@ -129,27 +135,55 @@ def delete_playlist(playlist_id:int,user_data = Depends(get_current_user),db = D
     }
 
 @router.get("/{playlist_id}/songs")
-def playlist_songs(playlist_id:int,user_data = Depends(get_current_user),db = Depends(get_db)):
-    
+def playlist_songs(
+    playlist_id: int,
+    user_data=Depends(get_current_user),
+    db=Depends(get_db)
+):
     check_user(user_data.user_id, db)
-    
+
     playlist = db.scalar(
         select(Playlist).where(
             Playlist.playlist_id == playlist_id,
             Playlist.user_id == user_data.user_id
         )
     )
+
     if not playlist:
         raise HTTPException(
             status_code=404,
             detail="Playlist not found"
         )
-    songs = db.scalars(
-        select(playlist_song).where(
+
+    songs = db.execute(
+        select(
+            SongDetails,
+            playlist_song.position
+        )
+        .join(
+            playlist_song,
+            playlist_song.song_id == SongDetails.song_id
+        )
+        .where(
             playlist_song.playlist_id == playlist_id
         )
+        .order_by(
+            playlist_song.position
+        )
     ).all()
-    return songs
+
+    return [
+        {
+            "song_id": song.song_id,
+            "song_name": song.song_name,
+            "album_id": song.album_id,
+            "song_key": song.song_key,
+            "song_cover_key": song.song_cover_key,
+            "duration_ms": song.duration_ms,
+            "position": position
+        }
+        for song, position in songs
+    ]
 
 
 @router.delete("/{playlist_id}/song/{song_id}")

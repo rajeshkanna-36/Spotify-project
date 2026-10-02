@@ -7,6 +7,7 @@ from app.artists.schemas import add_artist
 from sqlalchemy import select
 from app.auth.dependency import get_current_admin
 from app.auth.checker import check_admin
+from app.artists.models import song_artist
 
 router = APIRouter(
     prefix="/artist",
@@ -33,22 +34,35 @@ def add_artist(artist_data: add_artist,admin=Depends(get_current_admin), db=Depe
     }
 
 @router.delete("/delete_artist/{artist_id}")
-def delete_artist(artist_id: int, admin=Depends(get_current_admin), db=Depends(get_db)):
-    
+def delete_artist(
+    artist_id: int,
+    admin=Depends(get_current_admin),
+    db=Depends(get_db)
+):
     check_admin(admin.admin_id, db)
-    
+
     exist_artist = db.scalar(
         select(artist).where(
             artist.artist_id == artist_id
         )
     )
+
     if not exist_artist:
         raise HTTPException(
             status_code=404,
             detail="Artist not found"
         )
+
+    # Delete artist ↔ song relationships
+    db.query(song_artist).filter(
+        song_artist.artist_id == artist_id
+    ).delete()
+
+    # Delete artist
     db.delete(exist_artist)
+
     db.commit()
+
     return {
         "message": "Artist deleted",
         "artist_id": artist_id

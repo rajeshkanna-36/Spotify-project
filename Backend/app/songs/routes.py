@@ -10,6 +10,7 @@ from app.auth.dependency import get_current_admin
 from app.auth.checker import check_admin
 from app.storage.s3 import delete_object
 from app.artists.models import song_artist
+from app.playlists.models import playlist_song
 
 
 router = APIRouter(
@@ -95,6 +96,10 @@ def delete_song(song_id:int,admin=Depends(get_current_admin), db=Depends(get_db)
     
     db.query(song_artist).filter(
         song_artist.song_id == song_id
+    ).delete()
+
+    db.query(playlist_song).filter(
+        playlist_song.song_id == song_id
     ).delete()
     
     db.delete(exists_song)
