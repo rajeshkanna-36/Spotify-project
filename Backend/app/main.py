@@ -21,6 +21,7 @@ from app.artists.routes import router as artist_router
 from app.songs.song_artist_routes import router as song_artist_router
 from app.playlists.routes import router as playlist_router
 from app.streaming.stream_router import router as stream_router
+from app.search.router import router as search_router
 
 
 Base.metadata.create_all(bind=engine)
@@ -37,5 +38,6 @@ app.include_router(artist_router)
 app.include_router(song_artist_router)
 app.include_router(playlist_router)
 app.include_router(stream_router)
+app.include_router(search_router)
 
 

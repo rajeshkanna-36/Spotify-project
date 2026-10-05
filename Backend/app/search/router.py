@@ -13,28 +13,28 @@ router = APIRouter(
     prefix="/search",
     tags=["Search"]
 )
-@router.get("/{query}")
-def search(query:str, user_data = Depends(get_current_user),db = Depends(get_db)):
+@router.get("/")
+def search(q:str, user_data = Depends(get_current_user),db = Depends(get_db)):
     check_user(user_data.user_id, db)
 
     songs = db.scalars(
         select(SongDetails).where(
-            SongDetails.song_name.ilike(f"%{query}%")
+            SongDetails.song_name.ilike(f"%{q}%")
         ).limit(5)
     ).all()
 
-    artist = db.scalars(
+    artist_data = db.scalars(
         select(artist).where(
-            artist.artist_name.ilike(f"%{query}%")
+            artist.artist_name.ilike(f"%{q}%")
         ).limit(5)
     ).all()
 
-    album = db.scalars(
+    album_data = db.scalars(
         select(album).where(
-            album.album_name.ilike(f"%{query}%")
+            album.album_name.ilike(f"%{q}%")
         ).limit(5)
     ).all()
 
     
-    return {"Songs" : songs,"Artist":artist,"Album":album}
+    return {"Songs" : songs,"Artist":artist_data,"Album":album_data}
     
