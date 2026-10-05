@@ -8,7 +8,7 @@ from app.albums.schemas import add_album
 from app.auth.checker import check_admin
 from app.auth.dependency import get_current_admin
 from app.storage.s3 import delete_objects
-from app.artists.models import song_artist
+from app.songs.models import song_artist
 
 router = APIRouter(
     prefix="/album",

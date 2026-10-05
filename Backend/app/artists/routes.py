@@ -7,7 +7,7 @@ from app.artists.schemas import add_artist
 from sqlalchemy import select
 from app.auth.dependency import get_current_admin
 from app.auth.checker import check_admin
-from app.artists.models import song_artist
+from app.songs.models import song_artist
 
 router = APIRouter(
     prefix="/artist",

@@ -8,8 +8,8 @@ from app.albums.models import album
 from app.storage.s3 import upload_mp3
 from app.auth.dependency import get_current_admin
 from app.auth.checker import check_admin
-from app.storage.s3 import delete_object
-from app.artists.models import song_artist
+from app.storage.s3 import delete_objects
+from app.songs.models import song_artist
 from app.playlists.models import playlist_song
 
 
@@ -91,8 +91,8 @@ def delete_song(song_id:int,admin=Depends(get_current_admin), db=Depends(get_db)
             detail="Song not found"
         )
 
-    delete_object(exists_song.song_key)
-    delete_object(exists_song.song_cover_key)
+    delete_objects(exists_song.song_key)
+    delete_objects(exists_song.song_cover_key)
     
     db.query(song_artist).filter(
         song_artist.song_id == song_id
