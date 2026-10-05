@@ -5,6 +5,8 @@ from app.songs.models import song_artist, SongDetails
 from app.songs.schemas import add_song_artist
 from app.artists.models import artist
 from app.database.connection import get_db
+from app.auth.checker import check_admin
+from app.auth.dependency import get_current_admin
 
 
 router = APIRouter(
@@ -16,9 +18,11 @@ router = APIRouter(
 @router.post("/add_song_artist")
 def add_song_artist(
     song_artist_data: add_song_artist,
+    admin=Depends(get_current_admin),
     db=Depends(get_db)
 ):
-
+    check_admin(admin.admin_id, db)
+ 
     check_artist = db.scalar(
         select(artist).where(
             artist.artist_id == song_artist_data.artist_id
