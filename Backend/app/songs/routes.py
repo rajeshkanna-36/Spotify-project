@@ -76,7 +76,7 @@ def add_song(
 
     return new_song
 
-@router.delete("/delete_song{song_id}")
+@router.delete("/delete_song/{song_id}")
 def delete_song(song_id:int,admin=Depends(get_current_admin), db=Depends(get_db)):
     check_admin(admin.admin_id, db)
     

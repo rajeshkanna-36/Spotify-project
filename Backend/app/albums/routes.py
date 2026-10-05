@@ -44,7 +44,7 @@ def add_album(album_data: add_album,admin=Depends(get_current_admin), db=Depends
 
     return new_album
 
-@router.delete("/album_delete{album_id}")
+@router.delete("/album_delete/{album_id}")
 def delete_album(album_id: int,admin=Depends(get_current_admin), db=Depends(get_db)):
     check_admin(admin.admin_id, db)
     

@@ -1,6 +1,6 @@
-import boto3
+import boto3  
 
-from app.core.settings import AWS_ACCESS_KEY_ID,AWS_REGION,AWS_S3_BUCKET,AWS_SECRET_ACCESS_KEY
+from app.core.settings import AWS_ACCESS_KEY_ID, AWS_REGION, AWS_S3_BUCKET, AWS_SECRET_ACCESS_KEY
 
 s3_client = boto3.client(
     "s3",
@@ -30,7 +30,7 @@ def upload_mp3(file,obj_key : str):
 
     return obj_key
 
-def delete_object(obj_key: str):
+def delete_objects(obj_key: str):
     s3_client.delete_object(
         Bucket=AWS_S3_BUCKET,
         Key=obj_key

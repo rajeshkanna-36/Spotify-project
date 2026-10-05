@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 from app.users.schemas import UserCreate, UserLogin
 from app.auth.password import hash_password, verify_password
-from app.auth.jwt import create_access_token
+from app.auth.jwt import create_user_access_token
 from app.auth.dependency import get_current_user
 from fastapi.security import HTTPBearer
 
@@ -68,7 +68,7 @@ def login(user: UserLogin,db=Depends(get_db)):
             detail="Invalid email or password"
         )
 
-    access_token,expire_at = create_access_token(existing_user.user_id)
+    access_token,expire_at = create_user_access_token(existing_user.user_id)
     session = SessionTable(
         user_id = existing_user.user_id,
         token = access_token,
