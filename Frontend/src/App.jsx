@@ -1,9 +1,14 @@
+import Login from "./components/auth/login"
+import Signup from "./components/auth/signup"
+
 function App() {
   return (
-    <div className="min-h-screen bg-neutral-900 text-white flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-green-500">Spotify Clone Frontend Ready</h1>
+    <div>
+    <Signup/>
+    <Login/>
     </div>
   )
 }
 
 export default App
+ 
