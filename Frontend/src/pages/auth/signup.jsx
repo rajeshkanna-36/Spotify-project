@@ -17,10 +17,13 @@ function Signup(){
     });
     };
 
+    const navigate = useNavigate();
+    const login =(e) =>{
+        navigate("/login")
+    };
+
     const handleSubmit = async(e) =>{
         e.preventDefault();
-
-        console.log("Sending:", formdata);
 
         const response = await fetch("http://localhost:8000/auth/signup", {
             method: "POST",
@@ -31,14 +34,13 @@ function Signup(){
                 });
 
         const result = await response.json();
-
-        console.log("status:", response.status);
-        console.log("result:", JSON.stringify(result, null, 2));
-
-    }
-    const navigate = useNavigate();
-    const login =(e) =>{
-        navigate("/login")
+        
+        if(response.ok){
+            navigate("/home")
+        } else {
+            const errorMsg = Array.isArray(result.detail) ? result.detail[0].msg : result.detail;
+            alert(errorMsg || "Signup failed");
+        }
     };
 
     return(
@@ -109,12 +111,7 @@ function Signup(){
                 />
             </div>
 
-            <button
-                type="submit"
-                className="w-full bg-green-500 hover:bg-green-400 text-black font-bold py-3 rounded-full transition"
-            >
-                Sign up
-            </button>
+            <Button type="submit">Signup</Button>
 
         </form>
 

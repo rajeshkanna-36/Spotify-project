@@ -39,14 +39,13 @@ function Login(){
 
     const result = await response.json();
 
-    console.log("status:", response.status);
-    console.log("result:", JSON.stringify(result, null, 2));
-
     if(response.ok){
         localStorage.setItem("access_token" , result.access_token);
-        console.log("sucess");
-
-    };
+        navigate("/home")
+    } else {
+        const errorMsg = Array.isArray(result.detail) ? result.detail[0].msg : result.detail;
+        alert(errorMsg || "Login failed");
+    }
     }
 
     return(
