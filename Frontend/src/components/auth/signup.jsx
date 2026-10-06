@@ -4,7 +4,7 @@ function Signup(){
 
     const[formdata,setformdata] = useState({
         user_name : "",
-        email : "",
+        email_id : "",
         password : ""
     });
 
@@ -18,7 +18,20 @@ function Signup(){
     const handleSubmit = async(e) =>{
         e.preventDefault();
 
-        console.log(formdata)
+        console.log("Sending:", formdata);
+
+        const response = await fetch("http://localhost:8000/auth/signup", {
+            method: "POST",
+            headers: {
+                    "Content-Type": "application/json"
+                        },
+            body: JSON.stringify(formdata)
+                });
+
+const result = await response.json();
+
+console.log("status:", response.status);
+console.log("result:", JSON.stringify(result, null, 2));
 
     }
 
@@ -32,7 +45,7 @@ function Signup(){
                 </div>
                 <div>
                     <label>Email Id</label>
-                    <input type="email" placeholder="email_id" name="email" onChange={handleChange} required/>
+                    <input type="email" placeholder="email_id" name="email_id" onChange={handleChange} required/>
                 </div>
 
                 <div>

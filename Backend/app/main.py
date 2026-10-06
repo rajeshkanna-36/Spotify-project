@@ -1,5 +1,6 @@
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.database.base import Base
 from app.database.connection import engine
@@ -28,10 +29,21 @@ from app.history.routes import router as history_router
 
 Base.metadata.create_all(bind=engine)
 
+
+
 app = FastAPI(
     title = "Spotify API",
     version="1.0.0"
 )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(admin_router)
 app.include_router(user_router)
 app.include_router(song_router)

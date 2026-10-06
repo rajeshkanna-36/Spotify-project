@@ -8,7 +8,6 @@ function Login(){
     });
 
     const handleChange =(e)=>{
-
         setformdata({
             ...formdata,
             [e.target.name] :e.target.value
@@ -16,10 +15,22 @@ function Login(){
 
     };
 
-    const handleSubmit =(e) =>{
+    const handleSubmit = async(e) =>{
         e.preventDefault();
 
-        console.log(formdata)
+        const response = await fetch("http://localhost:8000/auth/login", {
+            method : "POST",
+            headers : {
+                "Content-Type": "application/json"
+            },
+
+            body : JSON.stringify(formdata)
+        });
+
+        const result = await response.json();
+
+        console.log("status:", response.status);
+        console.log("result:", JSON.stringify(result, null, 2));
     };
 
     return(
@@ -28,7 +39,7 @@ function Login(){
         <form onSubmit={handleSubmit}>
             <div>
                 <label>Email ID</label>
-                <input type="email" name="emaill_id" placeholder = "email_id" onChange={handleChange} required />
+                <input type="text" name="email_id" placeholder = "email_id" onChange={handleChange} required />
             </div>
 
             <div>
