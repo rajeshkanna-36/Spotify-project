@@ -1,7 +1,12 @@
+import Navbar from "../../components/navbar";
+import HomePlaylist from "./home-playlist";
 
 function Home(){
     return(
-        <h1>Hello World! am Selvaraj</h1>
+        <div>
+        <Navbar/>
+        <HomePlaylist/>
+        </div>
     );
 };
 

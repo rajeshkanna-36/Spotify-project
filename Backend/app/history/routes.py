@@ -86,3 +86,4 @@ def delete_history(history_id:int, user_data=Depends(get_current_user), db=Depen
     return {
         "message": "History deleted successfully"
     }
+
