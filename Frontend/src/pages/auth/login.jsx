@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import Button from "../../components/button";
+import { login } from "../../api/auth";
 
 function Login(){
 
@@ -24,29 +25,23 @@ function Login(){
         navigate("/signup")
     );
 
-    const handleSubmit = async (e) => {
-    e.preventDefault();
 
-     console.log("Sending:", formdata);
+    const handleSubmit = async(e) =>{
+        e.preventDefault();
 
-    const response = await fetch("http://localhost:8000/auth/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formdata)
-    });
+        try{
 
-    const result = await response.json();
+            const response = await login(formdata);
 
-    if(response.ok){
-        localStorage.setItem("access_token" , result.access_token);
-        navigate("/home")
-    } else {
-        const errorMsg = Array.isArray(result.detail) ? result.detail[0].msg : result.detail;
-        alert(errorMsg || "Login failed");
-    }
-    }
+            localStorage.setItem("access_token", response.data.access_token);
+
+            navigate("/home")
+        }catch(error){
+            const errormsg = error.response?.data?.detail;
+            alert(errormsg || "login failed");
+        }
+
+    };
 
     return(
         <div className="min-h-screen bg-black flex flex-col items-center justify-center px-4">

@@ -3,7 +3,7 @@ function Button({children,type = "button",onClick,variant = "primary"}) {
 
     const variants = {
         primary:
-            "bg-green-500 hover:bg-green-400 text-black",
+            "bg-[#1ED760] hover:bg-green-400 text-black",
 
         secondary:
             "bg-white hover:bg-neutral-200 text-black",

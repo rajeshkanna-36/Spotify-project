@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/button";
+import { signup } from "../../api/auth";
 
 function Signup(){
 
@@ -22,26 +23,20 @@ function Signup(){
         navigate("/login")
     };
 
-    const handleSubmit = async(e) =>{
+    const handleSubmit =async(e) =>{
         e.preventDefault();
 
-        const response = await fetch("http://localhost:8000/auth/signup", {
-            method: "POST",
-            headers: {
-                    "Content-Type": "application/json"
-                        },
-            body: JSON.stringify(formdata)
-                });
+        try{
+            const response = await signup(formdata);
 
-        const result = await response.json();
-        
-        if(response.ok){
-            navigate("/home")
-        } else {
-            const errorMsg = Array.isArray(result.detail) ? result.detail[0].msg : result.detail;
-            alert(errorMsg || "Signup failed");
+            navigate("/login");
+
+        }catch(error){
+            const errormsg = error.response?.data?.detail;
+
+            alert(errormsg || "signup failed");
         }
-    };
+    }
 
     return(
         <div className="min-h-screen bg-black flex flex-col items-center justify-center px-4">
