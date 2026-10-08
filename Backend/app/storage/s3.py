@@ -30,6 +30,16 @@ def upload_mp3(file,obj_key : str):
 
     return obj_key
 
+def get_file_url(obj_key: str):
+    return s3_client.generate_presigned_url(
+        "get_object",
+        Params={
+            "Bucket": AWS_S3_BUCKET,
+            "Key": obj_key
+        },
+        ExpiresIn=3600
+    )
+
 def delete_objects(obj_key: str):
     s3_client.delete_object(
         Bucket=AWS_S3_BUCKET,

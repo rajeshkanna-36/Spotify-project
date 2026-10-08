@@ -1,5 +1,10 @@
-import client from "./client"
+import client from "./client";
 
-export const Recent_home =()=>{
-    return response = client.get("history/my_history");
-}
+export const getRecentHistory = (page = 1, limit = 8) => {
+    return client.get("/history/my_history", {
+        params: {
+            page_no: page,
+            limit: limit
+        }
+    });
+};

@@ -1,3 +1,4 @@
+from app.storage.s3 import get_file_url
 from fastapi import APIRouter,Depends,HTTPException, Query
 from sqlalchemy import select
 
@@ -41,19 +42,46 @@ def add_history(
     return new_history
 
 @router.get("/my_history")
-def get_history(page_no : int = Query(1, ge=1),limit : int = Query(10, ge=1, le=100) ,user_data=Depends(get_current_user), db=Depends(get_db)):
+def get_history(
+    page_no: int = Query(1, ge=1),
+    limit: int = Query(8, ge=1, le=100),
+    user_data=Depends(get_current_user),
+    db=Depends(get_db)
+):
     check_user(user_data.user_id, db)
 
     offset = (page_no - 1) * limit
 
-
-    histories = db.scalars(
-        select(history).where(
+    histories = db.execute(
+        select(
+            history.song_id,
+            SongDetails.song_name,
+            SongDetails.song_cover_key
+        )
+        .join(
+            SongDetails,
+            history.song_id == SongDetails.song_id
+        )
+        .where(
             history.user_id == user_data.user_id
-        ).order_by(history.played_at.desc()).limit(limit).offset(offset)
+        )
+        .order_by(
+            history.played_at.desc()
+        )
+        .limit(limit)
+        .offset(offset)
     ).all()
 
-    return histories
+   
+
+    return [
+        {
+            "song_id": row.song_id,
+            "song_name": row.song_name,
+            "song_cover_url": get_file_url(row.song_cover_key)
+        }
+        for row in histories
+    ]
 
 
 @router.delete("/all")
