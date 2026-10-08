@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {getRecentHistory} from '/src/api/recent.js';
 import SongCard from "../../components/songcard";
 
-function HomePlaylist() {
+function Recents() {
 
     
     const [recentSongs, setRecentSongs] = useState([]);
@@ -25,9 +25,9 @@ function HomePlaylist() {
     }, []);
 
     return (
-        <div className="bg-neutral-800 h-[560px] w-[640px] rounded-xl ml-80 p-6">
+        <div className="bg-neutral-800 h-[570px] w-[620px] rounded-xl p-6">
 
-    <h1 className="text-white text-2xl font-bold mb-6">
+    <h1 className="text-white text-xl font-bold mb-6">
         Recent
     </h1>
 
@@ -43,4 +43,4 @@ function HomePlaylist() {
 </div>
     )}
 
-export default HomePlaylist;
+export default Recents;

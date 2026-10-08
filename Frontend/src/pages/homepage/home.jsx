@@ -1,11 +1,17 @@
 import Navbar from "../../components/navbar";
-import HomePlaylist from "./home-playlist";
+import Current_play_info from "./currentplay";
+import MyPlaylist from "./myplaylist";
+import Recents from "./recent";
 
 function Home(){
     return(
         <div>
         <Navbar/>
-        <HomePlaylist/>
+        <div className="flex ml-5 gap-5 py-2 ">
+        <MyPlaylist/>
+        <Recents/>
+        <Current_play_info/>
+        </div>
         </div>
     );
 };
