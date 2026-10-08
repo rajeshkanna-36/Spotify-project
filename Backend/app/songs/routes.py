@@ -5,7 +5,7 @@ from uuid import uuid4
 from app.database.connection import get_db
 from app.songs.models import SongDetails
 from app.albums.models import album
-from app.storage.s3 import upload_mp3
+from app.storage.s3 import upload_mp3,upload_cover_image
 from app.auth.dependency import get_current_admin
 from app.auth.checker import check_admin
 from app.storage.s3 import delete_objects
@@ -24,19 +24,31 @@ def add_song(
     admin=Depends(get_current_admin),
     song_name: str = Form(...),
     album_id: int = Form(...),
-    song_cover_key: str = Form(...),
     duration_ms: int = Form(...),
-    file: UploadFile = File(...),
+    cover_image: UploadFile = File(...),
+    song_file: UploadFile = File(...),
     db=Depends(get_db)
 ):
-
     check_admin(admin.admin_id, db)
 
     # Check MP3
-    if file.content_type != "audio/mpeg":
+    if song_file.content_type != "audio/mpeg":
         raise HTTPException(
             status_code=400,
             detail="Only MP3 files are allowed"
+        )
+
+    # Check image
+    allowed_images = {
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    }
+
+    if cover_image.content_type not in allowed_images:
+        raise HTTPException(
+            status_code=400,
+            detail="Only JPG, PNG and WEBP images are allowed"
         )
 
     # Check album
@@ -52,21 +64,29 @@ def add_song(
             detail="Album not found"
         )
 
-    # Generate S3 object key
-    object_key = f"songs/{uuid4()}.mp3"
+    # Generate S3 keys
+    song_key = f"songs/{uuid4()}.mp3"
+    cover_key = f"covers/{uuid4()}"
 
-    # Upload MP3 to S3
+    # Upload MP3
     upload_mp3(
-        file.file,
-        object_key
+        song_file.file,
+        song_key
     )
 
-    # Create database record
+    # Upload cover
+    upload_cover_image(
+        cover_image.file,
+        cover_key,
+        cover_image.content_type
+    )
+
+    # Create DB record
     new_song = SongDetails(
         song_name=song_name,
         album_id=album_id,
-        song_key=object_key,
-        song_cover_key=song_cover_key,
+        song_key=song_key,
+        song_cover_key=cover_key,
         duration_ms=duration_ms
     )
 
@@ -74,7 +94,8 @@ def add_song(
     db.commit()
     db.refresh(new_song)
 
-    return new_song
+    return {
+        new_song.song_id:"Sucessfully uploaded"}
 
 @router.delete("/delete_song/{song_id}")
 def delete_song(song_id:int,admin=Depends(get_current_admin), db=Depends(get_db)):

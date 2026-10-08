@@ -101,7 +101,8 @@ def delete_history(history_id:int, user_data=Depends(get_current_user), db=Depen
     check_user(user_data.user_id, db)
     check_history = db.scalar(
         select(history).where(
-            history.history_id == history_id
+            history.history_id == history_id,
+            history.user_id == user_data.user_id
         )
     )
     if not check_history:

@@ -12,7 +12,9 @@ function HomePlaylist() {
         const loadRecentSongs = async () => {
             try {
                 const response = await getRecentHistory();
+
                 setRecentSongs(response.data);
+                console.log("History response:", response.data);
             } catch (error) {
                 console.error("Failed to load recently played:", error);
             }
