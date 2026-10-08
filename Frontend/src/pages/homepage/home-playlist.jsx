@@ -25,14 +25,22 @@ function HomePlaylist() {
     }, []);
 
     return (
-        <div className="bg-neutral-800 h-[560px] w-[640px] rounded-xl ml-80">
-            <div className="flex gap-4">
-                {recentSongs.map((song) =>(
-                    <SongCard key={song.song_id} song={song}/>
-                ))}
-            </div>
-        </div>
-    );
-}
+        <div className="bg-neutral-800 h-[560px] w-[640px] rounded-xl ml-80 p-6">
+
+    <h1 className="text-white text-2xl font-bold mb-6">
+        Recent
+    </h1>
+
+    <div className="grid grid-cols-2 gap-4">
+        {recentSongs.slice(0, 8).map((song) => (
+            <SongCard
+                key={song.song_id}
+                song={song}
+            />
+        ))}
+    </div>
+
+</div>
+    )}
 
 export default HomePlaylist;

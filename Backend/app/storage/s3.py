@@ -1,21 +1,36 @@
 import boto3  
 
-from app.core.settings import AWS_ACCESS_KEY_ID, AWS_REGION, AWS_S3_BUCKET, AWS_SECRET_ACCESS_KEY
+import boto3
+from botocore.config import Config
+
+from app.core.settings import (
+    AWS_ACCESS_KEY_ID,
+    AWS_REGION,
+    AWS_S3_BUCKET,
+    AWS_SECRET_ACCESS_KEY
+)
 
 s3_client = boto3.client(
     "s3",
     aws_access_key_id=AWS_ACCESS_KEY_ID,
     aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-    region_name=AWS_REGION
+    region_name=AWS_REGION,
+    config=Config(
+        signature_version="s3v4",
+        s3={
+            "addressing_style": "virtual"
+        }
+    )
 )
 
-def test_connnection():
-
-    response = s3_client.head_bucket(
-        Bucket = AWS_S3_BUCKET
+def test_download(obj_key: str):
+    response = s3_client.get_object(
+        Bucket=AWS_S3_BUCKET,
+        Key=obj_key
     )
 
-    print(response)
+    print("S3 GET SUCCESS")
+    print(response["ContentType"])
 
 def upload_mp3(file,obj_key : str):
 
