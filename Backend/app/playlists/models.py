@@ -10,7 +10,6 @@ class Playlist(Base):
     playlist_id:Mapped[int] = mapped_column(BigInteger,primary_key=True)
     user_id:Mapped[int] = mapped_column(BigInteger, ForeignKey("User.user_id"),nullable=False)
     playlist_name:Mapped[str] = mapped_column(Text,nullable=False)
-    playlist_cover_image : Mapped[str] =mapped_column(Text, nullable = False)
     created_at:Mapped[datetime] = mapped_column(TIMESTAMP,nullable=False)
 
 

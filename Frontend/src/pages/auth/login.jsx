@@ -10,20 +10,18 @@ function Login(){
         password : ""
     });
 
-    const handleChange =(e)=>{
-
+    const handleChange = (e) => {
         setformdata({
             ...formdata,
-            [e.target.name] :e.target.value
-    });
-
+            [e.target.name]: e.target.value,
+        });
     };
 
     const navigate = useNavigate();
 
-    const signup =(e)=>(
-        navigate("/signup")
-    );
+    const signup = () => {
+        navigate("/signup");
+    };
 
 
     const handleSubmit = async(e) =>{

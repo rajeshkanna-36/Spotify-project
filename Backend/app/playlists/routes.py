@@ -1,7 +1,7 @@
 from fastapi import APIRouter,Depends,HTTPException, UploadFile,Form,File
 
 from app.playlists.models import Playlist, playlist_song
-from app.playlists.schemas import playlist_create, playlist_add
+from app.playlists.schemas import playlist_add
 from app.database.connection import get_db
 from app.auth.dependency import get_current_user
 from sqlalchemy import select
@@ -35,6 +35,24 @@ def create_playlist(
         "message": "Playlist created successfully",
         "playlist_id": new_playlist.playlist_id
     }
+
+@router.get("/my_playlist")
+def my_playlist(user_data = Depends(get_current_user),db = Depends(get_db)):
+    check_user(user_data.user_id, db)
+    
+    playlists = db.scalars(
+        select(Playlist).where(
+            Playlist.user_id == user_data.user_id
+        )
+    ).all()
+    return [
+        {
+        "playlist_name":playlist.playlist_name,
+        "playlist_id" : playlist.playlist_id
+    }
+        for playlist in playlists
+    ]
+
 
 @router.put("/add_song")
 def add_song(playlist_add_data: playlist_add,user_data =Depends(get_current_user),db=Depends(get_db)):
@@ -83,22 +101,6 @@ def add_song(playlist_add_data: playlist_add,user_data =Depends(get_current_user
         "song_id": new_song.song_id
     }
 
-@router.get("/my_playlist")
-def my_playlist(user_data = Depends(get_current_user),db = Depends(get_db)):
-    check_user(user_data.user_id, db)
-    
-    playlists = db.scalars(
-        select(Playlist).where(
-            Playlist.user_id == user_data.user_id
-        )
-    ).all()
-    return [
-        {
-        "playlist_name":playlists.playlist_name,
-        "playlist_id" : playlists.playlist_id
-    }
-        for rows in playlists
-    ]
 
 
 @router.get("/{playlist_id}")

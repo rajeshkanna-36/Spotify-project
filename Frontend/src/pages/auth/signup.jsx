@@ -19,15 +19,16 @@ function Signup(){
     };
 
     const navigate = useNavigate();
-    const login =(e) =>{
-        navigate("/login")
+    
+    const login = () => {
+        navigate("/login");
     };
 
     const handleSubmit =async(e) =>{
         e.preventDefault();
 
         try{
-            const response = await signup(formdata);
+            await signup(formdata);
 
             navigate("/login");
 
