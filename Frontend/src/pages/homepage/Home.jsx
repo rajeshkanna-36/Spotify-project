@@ -1,5 +1,5 @@
 import Navbar from "../../components/navbar";
-import CurrentPlay from "./CurrentPlay";
+import CurrentPlay from "./currentplay";
 import MyPlaylist from "./MyPlaylist";
 import HomeMain from "./HomeMain";
 
