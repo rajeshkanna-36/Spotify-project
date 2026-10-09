@@ -7,6 +7,7 @@ from app.auth.dependency import get_current_user
 from sqlalchemy import select
 from app.auth.checker import check_user
 from app.songs.models import SongDetails
+from datetime import datetime
 
 router = APIRouter(
     prefix="/playlist",
@@ -16,15 +17,14 @@ router = APIRouter(
 @router.post("/create_playlist")
 def create_playlist( 
     playlist_name : str = Form(...),
-    playlist_cover_image : UploadFile = File(...)
-    , user_data =Depends(get_current_user),db = Depends(get_db)):
+    user_data =Depends(get_current_user),db = Depends(get_db)):
 
     check_user(user_data.user_id, db)
-    
+
     new_playlist = Playlist(
         user_id = user_data.user_id,
-        playlist_name = playlist_data.playlist_name,
-        created_at = playlist_data.created_at
+        playlist_name = playlist_name,
+        created_at = datetime.utcnow()
     )
 
     db.add(new_playlist)
@@ -37,8 +37,7 @@ def create_playlist(
     }
 
 @router.put("/add_song")
-def add_song(
-    playlist_add_data: playlist_add,user_data =Depends(get_current_user),db=Depends(get_db)):
+def add_song(playlist_add_data: playlist_add,user_data =Depends(get_current_user),db=Depends(get_db)):
 
     check_user(user_data.user_id, db)
     
@@ -93,7 +92,14 @@ def my_playlist(user_data = Depends(get_current_user),db = Depends(get_db)):
             Playlist.user_id == user_data.user_id
         )
     ).all()
-    return 
+    return [
+        {
+        "playlist_name":playlists.playlist_name,
+        "playlist_id" : playlists.playlist_id
+    }
+        for rows in playlists
+    ]
+
 
 @router.get("/{playlist_id}")
 def playlist(playlist_id: int,user_data = Depends(get_current_user),db = Depends(get_db)):
