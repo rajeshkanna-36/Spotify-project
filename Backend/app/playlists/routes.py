@@ -1,4 +1,4 @@
-from fastapi import APIRouter,Depends,HTTPException
+from fastapi import APIRouter,Depends,HTTPException, UploadFile,Form,File
 
 from app.playlists.models import Playlist, playlist_song
 from app.playlists.schemas import playlist_create, playlist_add
@@ -14,7 +14,10 @@ router = APIRouter(
 )
 
 @router.post("/create_playlist")
-def create_playlist( playlist_data : playlist_create, user_data =Depends(get_current_user),db = Depends(get_db)):
+def create_playlist( 
+    playlist_name : str = Form(...),
+    playlist_cover_image : UploadFile = File(...)
+    , user_data =Depends(get_current_user),db = Depends(get_db)):
 
     check_user(user_data.user_id, db)
     
@@ -90,7 +93,7 @@ def my_playlist(user_data = Depends(get_current_user),db = Depends(get_db)):
             Playlist.user_id == user_data.user_id
         )
     ).all()
-    return playlists
+    return 
 
 @router.get("/{playlist_id}")
 def playlist(playlist_id: int,user_data = Depends(get_current_user),db = Depends(get_db)):
