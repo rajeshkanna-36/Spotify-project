@@ -1,4 +1,4 @@
-import client from "./client";
+import client from "../../api/client";
 
 export const signup =(data)=>{
     return client.post("/auth/signup",data);

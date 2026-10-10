@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { getRecentHistory } from '/src/api/recent.js';
-import SongCard from "../../components/songcard";
+import { getRecentHistory } from "../api";
+import SongCard from "../../songs/components/SongCard";
 
-function Recent() {
+function RecentSongs() {
     const [recentSongs, setRecentSongs] = useState([]);
 
     useEffect(() => {
@@ -37,4 +37,4 @@ function Recent() {
     );
 }
 
-export default Recent;
+export default RecentSongs;

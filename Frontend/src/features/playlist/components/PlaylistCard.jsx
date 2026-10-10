@@ -1,6 +1,6 @@
-import playlist_icon from "../assets/playlist.png";
+import playlistIcon from "../../../assets/playlist-cover-placeholder.png";
 
-function Playlistcard({ playlist, onSelect }) {
+function PlaylistCard({ playlist, onSelect }) {
   const title = playlist?.playlist_name || "Untitled Playlist";
 
       
@@ -8,7 +8,7 @@ function Playlistcard({ playlist, onSelect }) {
     <button onClick={onSelect}
     className="mt-5 flex h-16 w-full items-center gap-5 rounded-md p-2 hover:bg-neutral-700" >
       <img
-        src={playlist_icon}
+        src={playlistIcon}
         alt="playlist"
         className="h-full w-12 rounded-md"
       />
@@ -17,4 +17,4 @@ function Playlistcard({ playlist, onSelect }) {
   );
 }
 
-export default Playlistcard;
+export default PlaylistCard;

@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "../../components/button";
-import { signup } from "../../api/auth";
+import Button from "../../../components/ui/Button";
+import { signup } from "../api";
 
 function Signup(){
 
-    const[formdata,setformdata] = useState({
+    const [formData, setFormData] = useState({
         user_name : "",
         email_id : "",
         password : ""
     });
 
     const handleChange = (e) => {
-        setformdata({
-            ...formdata,
+        setFormData({
+            ...formData,
             [e.target.name] : e.target.value
     });
     };
@@ -28,7 +28,7 @@ function Signup(){
         e.preventDefault();
 
         try{
-            await signup(formdata);
+            await signup(formData);
 
             navigate("/login");
 

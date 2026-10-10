@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
 
-import plus_icon from "../../assets/plus.svg";
-import Playlistcard from "../../components/Playlist_card";
+import addIcon from "../../../assets/add-icon.svg";
+import Modal from "../../../components/ui/Modal";
+import PlaylistList from "../components/PlaylistList";
 
-import { createPlaylist, getMyPlaylists } from "../../api/playlist";
+import { createPlaylist, getMyPlaylists } from "../api";
 
-function MyPlaylist({ onSelectPlaylist }) {
-    const [playlistname, setPlaylistname] = useState("");
+function MyPlaylists({ onSelectPlaylist }) {
+    const [playlistName, setPlaylistName] = useState("");
     const [showForm, setShowForm] = useState(false);
-    const [playlist_data, setplaylist_data] = useState([]);
+    const [playlists, setPlaylists] = useState([]);
     const [isCreating, setIsCreating] = useState(false);
 
     const refreshPlaylists = async () => {
         try {
             const data = await getMyPlaylists();
 
-            setplaylist_data(data || []);
+            setPlaylists(data || []);
 
             console.log("Playlists:", data);
         } catch (error) {
@@ -35,7 +36,7 @@ function MyPlaylist({ onSelectPlaylist }) {
                 const data = await getMyPlaylists();
 
                 if (isMounted) {
-                    setplaylist_data(data || []);
+                    setPlaylists(data || []);
                 }
             } catch (error) {
                 console.error(
@@ -61,7 +62,7 @@ function MyPlaylist({ onSelectPlaylist }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const name = playlistname.trim();
+        const name = playlistName.trim();
 
         if (!name || isCreating) {
             return;
@@ -74,7 +75,7 @@ function MyPlaylist({ onSelectPlaylist }) {
 
             console.log("Playlist created:", response);
 
-            setPlaylistname("");
+            setPlaylistName("");
             setShowForm(false);
 
             // Refresh the playlist list
@@ -104,31 +105,27 @@ function MyPlaylist({ onSelectPlaylist }) {
                     onClick={handleCreatePlaylist}
                     className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-700 hover:bg-neutral-500"
                 >
-                    <img
-                        src={plus_icon}
-                        alt=""
-                        className="h-5 w-5"
-                    />
+                    <img src={addIcon} alt="" className="h-5 w-5" />
                 </button>
             </div>
 
             {/* Render playlists */}
-            {playlist_data.map((playlist) => (
-                <Playlistcard
-                    key={playlist.playlist_id}
-                    playlist={playlist}
-                    onSelect={() => onSelectPlaylist(playlist)}
-                />
-            ))}
+            <PlaylistList
+                playlists={playlists}
+                onSelectPlaylist={onSelectPlaylist}
+            />
 
             {/* Create Playlist Modal */}
             {showForm && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+                <Modal onClose={() => setShowForm(false)}>
                     <form
                         onSubmit={handleSubmit}
-                        className="w-80 rounded-xl bg-neutral-800 p-6 shadow-xl"
+                        className="w-80 p-6"
                     >
-                        <h2 className="mb-4 text-xl font-bold text-white">
+                        <h2
+                            id="create-playlist-title"
+                            className="mb-4 text-xl font-bold text-white"
+                        >
                             Create Playlist
                         </h2>
 
@@ -142,9 +139,9 @@ function MyPlaylist({ onSelectPlaylist }) {
                         <input
                             id="playlistname"
                             type="text"
-                            value={playlistname}
+                            value={playlistName}
                             onChange={(e) =>
-                                setPlaylistname(e.target.value)
+                                setPlaylistName(e.target.value)
                             }
                             placeholder="Enter playlist name"
                             maxLength={100}
@@ -158,7 +155,7 @@ function MyPlaylist({ onSelectPlaylist }) {
                                 disabled={isCreating}
                                 onClick={() => {
                                     setShowForm(false);
-                                    setPlaylistname("");
+                                    setPlaylistName("");
                                 }}
                                 className="rounded-full px-4 py-2 text-sm text-white hover:bg-neutral-700 disabled:opacity-50"
                             >
@@ -167,17 +164,17 @@ function MyPlaylist({ onSelectPlaylist }) {
 
                             <button
                                 type="submit"
-                                disabled={!playlistname.trim() || isCreating}
+                                disabled={!playlistName.trim() || isCreating}
                                 className="rounded-full bg-green-500 px-4 py-2 text-sm font-bold text-black hover:bg-green-400 disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 {isCreating ? "Creating..." : "Create"}
                             </button>
                         </div>
                     </form>
-                </div>
+                </Modal>
             )}
         </section>
     );
 }
 
-export default MyPlaylist;
+export default MyPlaylists;

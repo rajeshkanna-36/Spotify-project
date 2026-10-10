@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "../../components/button";
-import { login } from "../../api/auth";
+import Button from "../../../components/ui/Button";
+import { login } from "../api";
 
 function Login(){
 
-     const[formdata,setformdata]= useState({
+    const [formData, setFormData] = useState({
         email_id : "",
         password : ""
     });
 
     const handleChange = (e) => {
-        setformdata({
-            ...formdata,
+        setFormData({
+            ...formData,
             [e.target.name]: e.target.value,
         });
     };
@@ -29,7 +29,7 @@ function Login(){
 
         try{
 
-            const response = await login(formdata);
+            const response = await login(formData);
 
             localStorage.setItem("access_token", response.data.access_token);
 

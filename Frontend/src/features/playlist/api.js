@@ -1,4 +1,4 @@
-import client from './client';
+import client from "../../api/client";
 
 // for get all playlist //
 export const getMyPlaylists = async () => {
