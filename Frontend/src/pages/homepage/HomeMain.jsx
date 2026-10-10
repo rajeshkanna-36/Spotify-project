@@ -1,10 +1,12 @@
+import PlaylistDetail from "./PlaylistDetail";
 import Recent from "./Recent";
 
-function HomeMain() {
+
+function HomeMain({playlist}) {
     return (
         <div className="p-6">
             {/* Main scrollable content goes here, grouped in semantic sections */}
-            <Recent />
+            {playlist ?( <PlaylistDetail playlist={playlist}/>) : <Recent/>}
         </div>
     );
 }

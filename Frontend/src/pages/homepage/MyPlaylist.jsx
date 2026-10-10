@@ -5,7 +5,7 @@ import Playlistcard from "../../components/Playlist_card";
 
 import { createPlaylist, getMyPlaylists } from "../../api/playlist";
 
-function MyPlaylist() {
+function MyPlaylist({ onSelectPlaylist }) {
     const [playlistname, setPlaylistname] = useState("");
     const [showForm, setShowForm] = useState(false);
     const [playlist_data, setplaylist_data] = useState([]);
@@ -117,6 +117,7 @@ function MyPlaylist() {
                 <Playlistcard
                     key={playlist.playlist_id}
                     playlist={playlist}
+                    onSelect={() => onSelectPlaylist(playlist)}
                 />
             ))}
 

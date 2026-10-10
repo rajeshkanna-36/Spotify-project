@@ -1,13 +1,20 @@
-import playlist_icon from "../assets/playlist.png"
+import playlist_icon from "../assets/playlist.png";
 
-function Playlistcard({playlist_data}) {
+function Playlistcard({ playlist, onSelect }) {
+  const title = playlist?.playlist_name || "Untitled Playlist";
+
+      
   return (
-    
-    <div className="flex w-full h-16 gap-5 rounded-md hover:bg-neutral-700 mt-5 p-2 items-center">
-      <img src={playlist_icon} alt="playlist" className="w-12 h-full rounded-md"/>
-      <h2>{playlist_data.playlist_id}</h2>
-    </div>
-  )
+    <button onClick={onSelect}
+    className="mt-5 flex h-16 w-full items-center gap-5 rounded-md p-2 hover:bg-neutral-700" >
+      <img
+        src={playlist_icon}
+        alt="playlist"
+        className="h-full w-12 rounded-md"
+      />
+      <h2 className="text-sm font-medium text-white">{title}</h2>
+    </button>
+  );
 }
 
-export default Playlistcard
+export default Playlistcard;
