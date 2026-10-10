@@ -7,7 +7,7 @@ import PlaylistList from "../components/PlaylistList";
 import { createPlaylist, getMyPlaylists } from "../api";
 
 function MyPlaylists({ onSelectPlaylist }) {
-    const [playlistName, setPlaylistName] = useState("");
+    const [playlist_name, setPlaylistName] = useState("");
     const [showForm, setShowForm] = useState(false);
     const [playlists, setPlaylists] = useState([]);
     const [isCreating, setIsCreating] = useState(false);
@@ -61,8 +61,7 @@ function MyPlaylists({ onSelectPlaylist }) {
     // Submit the create playlist form
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const name = playlistName.trim();
+        const name = playlist_name.trim();
 
         if (!name || isCreating) {
             return;
@@ -139,7 +138,7 @@ function MyPlaylists({ onSelectPlaylist }) {
                         <input
                             id="playlistname"
                             type="text"
-                            value={playlistName}
+                            value={playlist_name}
                             onChange={(e) =>
                                 setPlaylistName(e.target.value)
                             }
@@ -164,7 +163,7 @@ function MyPlaylists({ onSelectPlaylist }) {
 
                             <button
                                 type="submit"
-                                disabled={!playlistName.trim() || isCreating}
+                                disabled={!playlist_name.trim() || isCreating}
                                 className="rounded-full bg-green-500 px-4 py-2 text-sm font-bold text-black hover:bg-green-400 disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 {isCreating ? "Creating..." : "Create"}
