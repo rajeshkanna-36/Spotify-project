@@ -5,7 +5,7 @@ from sqlalchemy import select
 from app.database.connection import get_db
 from app.songs.models import SongDetails
 from app.history.models import history
-from app.history.schemas import add_history
+from app.history.schemas import add_history as HistoryCreate
 from app.auth.dependency import get_current_user
 from app.auth.checker import check_user
 
@@ -17,7 +17,7 @@ router = APIRouter(
 
 @router.post("/add_history")
 def add_history(
-    history_data: add_history,
+    history_data: HistoryCreate,
     user_data=Depends(get_current_user),
     db=Depends(get_db)
 ):

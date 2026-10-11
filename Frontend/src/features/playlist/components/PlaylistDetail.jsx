@@ -18,16 +18,16 @@ function PlaylistDetail({playlist}) {
 
 
   return (
-    <section>
+    <section >
       <div className="flex text-7xl font-bold items-center gap-4">
         <img src={playlistImage} alt="" className="w-30 h-30 rounded-md" />
         <h1>{playlist.playlist_name}</h1>
       </div>
       
-      <div>
+      <div className="mt-5">
       {PlaylistSongs.map((song) => (
          <SongCard key={song.song_id} 
-         song={song} /> 
+         song={song}  /> 
          )
         )}
       </div>

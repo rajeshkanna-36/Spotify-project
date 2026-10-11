@@ -4,10 +4,11 @@ from app.playlists.models import Playlist, playlist_song
 from app.playlists.schemas import playlist_add
 from app.database.connection import get_db
 from app.auth.dependency import get_current_user
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from app.auth.checker import check_user
 from app.songs.models import SongDetails
 from datetime import datetime
+from app.storage.s3 import get_file_url
 
 router = APIRouter(
     prefix="/playlist",
@@ -135,10 +136,12 @@ def delete_playlist(playlist_id:int,user_data = Depends(get_current_user),db = D
             detail="Playlist not found"
         )
     
-    db.query(playlist_song).filter(
-        playlist_song.playlist_id == playlist_id
-    ).delete()
-    
+    db.execute(
+        delete(playlist_song).where(
+            playlist_song.playlist_id == playlist_id
+        )
+    )
+
     db.delete(playlist)
     db.commit()
     return {
@@ -189,7 +192,7 @@ def playlist_songs(
             "song_name": song.song_name,
             "album_id": song.album_id,
             "song_key": song.song_key,
-            "song_cover_key": song.song_cover_key,
+            "song_cover_url": get_file_url(song.song_cover_key),
             "duration_ms": song.duration_ms,
             "position": position
         }

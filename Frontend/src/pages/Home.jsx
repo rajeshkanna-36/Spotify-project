@@ -4,12 +4,14 @@ import CurrentPlay from "../features/player/components/CurrentPlay";
 import RecentSongs from "../features/history/components/RecentSongs";
 import PlaylistDetail from "../features/playlist/components/PlaylistDetail";
 import MyPlaylists from "../features/playlist/pages/MyPlaylists";
+import Player from "../features/player/components/player";
 
 function Home() {
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
 
     return (
-        <div className="mt-16 flex flex-1 gap-2 overflow-hidden p-2">
+        <div>
+        <div className="mt-16 flex flex-1 gap-2 overflow-hidden h-120 p-2">
             <Sidebar className="hidden w-75 shrink-0 md:block">
                 <MyPlaylists onSelectPlaylist={setSelectedPlaylist} />
             </Sidebar>
@@ -26,6 +28,11 @@ function Home() {
                 <CurrentPlay />
             </Sidebar>
         </div>
+        <div className="shrink-0 flex items-center justify-center h-20 p-3"> 
+            <Player /> 
+        </div>
+        </div>
+
     );
 }
 
