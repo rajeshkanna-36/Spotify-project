@@ -1,12 +1,14 @@
 import { useState } from "react"
 import play_icon from '../../../assets/play-icon.svg'
 import pause_icon from '../../../assets/pause-icon.svg'
-function Player() {
+function Player({song}) {
 
      const [play, setPlay] = useState(false);
       const handlePlay = () => { 
         setPlay(!play);
        };
+
+    
         return ( 
         <section > 
            <button
@@ -19,6 +21,7 @@ function Player() {
         className="h-5 w-5"
     />
 </button>
+            {play?<audio src={song.song_url}/>:"failed"}
         </section> 
 ); }
 
