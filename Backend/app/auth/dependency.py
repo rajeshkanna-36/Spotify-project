@@ -14,10 +14,7 @@ from datetime import datetime, timezone
 auth_scheme = HTTPBearer()
 
 
-def get_current_user(
-    token=Depends(auth_scheme),
-    db=Depends(get_db)
-):
+def get_current_user(token=Depends(auth_scheme),db=Depends(get_db)):
     payload = jwt.decode(
         token.credentials,
         JWT_SECRET_KEY,

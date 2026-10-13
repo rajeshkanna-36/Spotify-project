@@ -5,10 +5,9 @@ from uuid import uuid4
 from app.database.connection import get_db
 from app.songs.models import SongDetails
 from app.albums.models import album
-from app.storage.s3 import upload_mp3,upload_cover_image
+from app.storage.s3 import upload_mp3, upload_cover_image, delete_objects, get_file_url
 from app.auth.dependency import get_current_admin
 from app.auth.checker import check_admin
-from app.storage.s3 import delete_objects
 from app.songs.models import song_artist
 from app.playlists.models import playlist_song
 
@@ -129,3 +128,41 @@ def delete_song(song_id:int,admin=Depends(get_current_admin), db=Depends(get_db)
     return {
         "message": "Song deleted successfully"
     }
+
+
+@router.get("/{song_id}")
+def get_song(song_id: int, db=Depends(get_db)):
+    song = db.scalar(
+        select(SongDetails).where(
+            SongDetails.song_id == song_id
+        )
+    )
+    if not song:
+        raise HTTPException(
+            status_code=404,
+            detail="Song not found"
+        )
+    return {
+        "song_id": song.song_id,
+        "song_name": song.song_name,
+        "album_id": song.album_id,
+        "song_key": song.song_key,
+        "song_cover_url": get_file_url(song.song_cover_key),
+        "duration_ms": song.duration_ms
+    }
+
+
+@router.get("/")
+def get_all_songs(db=Depends(get_db)):
+    songs = db.scalars(select(SongDetails)).all()
+    return [
+        {
+            "song_id": song.song_id,
+            "song_name": song.song_name,
+            "album_id": song.album_id,
+            "song_key": song.song_key,
+            "song_cover_url": get_file_url(song.song_cover_key),
+            "duration_ms": song.duration_ms
+        }
+        for song in songs
+    ]

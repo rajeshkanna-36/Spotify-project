@@ -1,18 +1,28 @@
 import { useEffect, useState } from "react";
 import { getRecentHistory } from "../api";
 import SongCard from "../../songs/components/SongCard";
+import client from "../../../api/client";
 
-function RecentSongs() {
+function RecentSongs({ onPlaySong }) {
     const [recentSongs, setRecentSongs] = useState([]);
 
     useEffect(() => {
         const loadRecentSongs = async () => {
             try {
                 const response = await getRecentHistory();
-                setRecentSongs(response.data);
-                console.log("History response:", response.data);
+                if (response.data && response.data.length > 0) {
+                    setRecentSongs(response.data);
+                } else {
+                    const fallback = await client.get("/song/");
+                    setRecentSongs(fallback.data || []);
+                }
             } catch (error) {
-                console.error("Failed to load recently played:", error);
+                try {
+                    const fallback = await client.get("/song/");
+                    setRecentSongs(fallback.data || []);
+                } catch (fallbackError) {
+                    console.error("Failed to load songs:", fallbackError);
+                }
             }
         };
 
@@ -25,11 +35,12 @@ function RecentSongs() {
                 Recently Played
             </h2>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 xl:grid-cols-5 gap-4">
                 {recentSongs.slice(0, 8).map((song) => (
                     <SongCard
                         key={song.song_id}
                         song={song}
+                        onPlay={onPlaySong}
                     />
                 ))}
             </div>

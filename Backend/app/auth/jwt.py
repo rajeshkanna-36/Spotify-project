@@ -2,6 +2,9 @@ from datetime import datetime, timedelta, timezone
 from jose import jwt
 from app.core.settings import JWT_ACCESS_TOKEN_EXPIRE_MINUTES, JWT_SECRET_KEY, JWT_ALGORITHM
 
+if JWT_ALGORITHM is None:
+    raise ValueError("JWT_ALGORITHM must be configured")
+
 def create_user_access_token(user_id : int):
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES
@@ -41,5 +44,3 @@ def create_admin_access_token(admin_id: int, role: str):
     )
 
     return token, expire
-
-    

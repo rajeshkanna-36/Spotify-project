@@ -1,19 +1,9 @@
 
 
-//song_card we have to use in homepage recentsongs
+function SongCard({ song, onPlay }) {
 
-import Player from "../../player/components/player";
-
-
-
-function SongCard({ song }) {
-
-    const handleplay=(song)=>{
-        <Player song = {song}/>
-    };
-    
     return (
-        <button onClick={handleplay} className="flex w-full h-15 bg-neutral-700 gap-3 rounded-xl px-4 items-center font-bold text-white">
+        <button onClick={()=>onPlay(song)} className="flex w-full h-15 bg-neutral-700/40 gap-3 rounded-xl px-4 items-center font-bold text-white">
             <img
                 src={song.song_cover_url}
                 alt={song.song_name}

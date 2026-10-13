@@ -108,7 +108,7 @@ function MyPlaylists({ onSelectPlaylist }) {
                 </button>
             </div>
 
-            {/* Render playlists */}
+            
             <PlaylistList
                 playlists={playlists}
                 onSelectPlaylist={onSelectPlaylist}

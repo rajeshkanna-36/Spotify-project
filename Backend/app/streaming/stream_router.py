@@ -1,12 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from datetime import datetime, timezone
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import StreamingResponse
+from jose import JWTError, jwt
 from sqlalchemy import select
 
-from app.auth.dependency import get_current_user
 from app.database.connection import get_db
 from app.songs.models import SongDetails
+from app.history.models import history
+from app.auth.models import SessionTable
 from app.storage.s3 import s3_client
-from app.core.settings import AWS_S3_BUCKET
+from app.core.settings import AWS_S3_BUCKET, JWT_SECRET_KEY, JWT_ALGORITHM
+from app.auth.checker import check_user
 
 
 router = APIRouter(
@@ -15,13 +19,66 @@ router = APIRouter(
 )
 
 
+def authenticate_stream_token(token: str, db):
+    try:
+        payload = jwt.decode(
+            token,
+            JWT_SECRET_KEY,
+            algorithms=[JWT_ALGORITHM]
+        )
+    except JWTError:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token"
+        )
+
+    if payload.get("type") != "user":
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid user token"
+        )
+
+    user_id = int(payload.get("sub"))
+
+    session = db.scalar(
+        select(SessionTable).where(
+            SessionTable.user_id == user_id,
+            SessionTable.token == token,
+            SessionTable.expire_at > datetime.now(timezone.utc),
+            SessionTable.revoked == False
+        )
+    )
+
+    if not session:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid session or token expired"
+        )
+
+    return check_user(user_id, db)
+
+
 @router.get("/song/{song_id}")
 def stream_song(
     song_id: int,
     request: Request,
-    user_data=Depends(get_current_user),
+    token: str | None = Query(None, description="JWT access token"),
     db=Depends(get_db)
-):
+):  
+    # 1. Retrieve token from query param or Authorization header
+    raw_token = token
+    if not raw_token:
+        auth_header = request.headers.get("authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            raw_token = auth_header[7:].strip()
+
+    user = None
+    if raw_token and raw_token not in ("null", "undefined"):
+        try:
+            user = authenticate_stream_token(raw_token, db)
+        except Exception:
+            user = None
+    
     # Find song
     song = db.scalar(
         select(SongDetails).where(
@@ -35,14 +92,33 @@ def stream_song(
             detail="Song not found"
         )
 
+    # Automatically log to recently played history on playback start
+    range_header = request.headers.get("range")
+    if not range_header or range_header.startswith("bytes=0-"):
+        try:
+            new_history = history(
+                user_id=user.user_id,
+                song_id=song_id
+            )
+            db.add(new_history)
+            db.commit()
+        except Exception:
+            db.rollback()
+
     # Get requested byte range
     range_header = request.headers.get("range")
 
     # Get file size from S3
-    head = s3_client.head_object(
-        Bucket=AWS_S3_BUCKET,
-        Key=song.song_key
-    )
+    try:
+        head = s3_client.head_object(
+            Bucket=AWS_S3_BUCKET,
+            Key=song.song_key
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Audio file '{song.song_name}' not found in storage"
+        )
 
     file_size = head["ContentLength"]
 

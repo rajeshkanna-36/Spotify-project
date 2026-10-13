@@ -3,7 +3,7 @@ import playlistImage from "../../../assets/playlist-cover-placeholder.png";
 import { getallplaylist_songs } from "../api";
 import SongCard from "../../songs/components/SongCard";
 
-function PlaylistDetail({playlist}) {
+function PlaylistDetail({playlist, onPlaySong}) {
   const[PlaylistSongs,setPlaylistSongs] = useState([]);
 
   useEffect(() => { if (!playlist?.playlist_id) return; 
@@ -27,7 +27,7 @@ function PlaylistDetail({playlist}) {
       <div className="mt-5">
       {PlaylistSongs.map((song) => (
          <SongCard key={song.song_id} 
-         song={song}  /> 
+         song={song} onPlay={onPlaySong} /> 
          )
         )}
       </div>
